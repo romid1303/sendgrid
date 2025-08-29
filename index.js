@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fetch = require('node-fetch'); // If using Node.js < 18
 const { URLSearchParams } = require('url');
 
 const dotenv = require('dotenv');
