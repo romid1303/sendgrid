@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fetch = require('node-fetch'); // If using Node.js < 18
 const { URLSearchParams } = require('url');
+
+const dotenv = require('dotenv');
+dotenv.config();
+
 
 const app = express();
 const PORT = 3000;
@@ -14,25 +19,26 @@ app.post('/webhook', async (req, res) => {
 
         console.log('Received webhook data:', formData);
 
-        // Convert to x-www-form-urlencoded
-        const params = new URLSearchParams();
-        for (const key in formData) {
-            if (formData.hasOwnProperty(key)) {
-                params.append(key, formData[key]);
-            }
-        }
+        // Construct the payload you want to forward
+        const postData = {
+            body: JSON.stringify(formData), // You can change this based on actual need
+            to: 'deepanshu.kumar@hbgknowledge.com',
+            subject: 'Notification - Vendor Portal',
+            from: 'no-reply@hbgknowledge.in'
+        };
 
         // Send POST request using fetch
         const response = await fetch('https://web-dev-team-429810.as.r.appspot.com/send-mail/web-dev', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Bearer mail_89786',
+                'Authorization': process.env.AUTHORIZATION,
             },
-            body: params.toString(),
+           
+            body: new URLSearchParams(postData).toString()
         });
 
-        const result = await response.text(); // or .json() if it's JSON
+        const result = await response.text(); // use .json() if API returns JSON
 
         console.log('Forwarded successfully:', result);
 
